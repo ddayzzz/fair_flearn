@@ -5,15 +5,18 @@ from PIL import Image
 
 
 def generate_dataset():
-
+    # 对应的 task 拥有的数据的类的索引号: 前300个task数据范围为 [0, 1200); 后100个为 [1200, 1623), 注意这个是类
     task_to_class = {}
     for i in range(400): # 400 tasks
         if i < 300: # first 300 meta-training tasks
+            # 看样子是 5 ways
             class_ids = np.random.choice(1200, 5)
             task_to_class[i]=class_ids
-        else: # 
+        else:
+            # 后面的 426
             class_ids = np.random.choice(range(1200, 1623), 5)
             task_to_class[i]=class_ids
+    # 拥有对应类的 task 的编号
     class_to_task={}
     for i in range(1643):
         class_to_task[i] = []
@@ -40,17 +43,19 @@ def generate_dataset():
             content = content.resize((28, 28))
 
             #print(np.asarray(content))
-            content = np.asarray(content, dtype="int32").flatten()
+            # 图象是灰度图像
+            content = np.asarray(content, dtype=np.int32).flatten()
             all_data.append(content)
+            # 10-shot
             if i < 10:
                 for device_id in class_to_task[idx]:
                     X_train[device_id].append(content)
-                    y_train[device_id].append(np.where(task_to_class[device_id]==idx)[0][0])
+                    y_train[device_id].append(int(np.where(task_to_class[device_id]==idx)[0][0].astype(np.int32)))
 
             else:
                 for device_id in class_to_task[idx]:
                     X_test[device_id].append(content)
-                    y_test[device_id].append(np.where(task_to_class[device_id]==idx)[0][0])
+                    y_test[device_id].append(int(np.where(task_to_class[device_id]==idx)[0][0].astype(np.int32)))
 
 
     all_data=np.asarray(all_data)
@@ -79,6 +84,8 @@ def main():
     test_output = "./data/test/mytest.json"
 
     X_train, y_train, X_test, y_test = generate_dataset()
+
+
     print("have read in X_train, y_train, X_test, y_test")
     # Create data structure
     train_data = {'users': [], 'user_data': {}, 'num_samples': []}

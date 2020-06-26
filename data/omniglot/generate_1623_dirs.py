@@ -1,6 +1,5 @@
 import os, json
-import numpy as np
-from PIL import Image
+import shutil
 
 
 ### we form 1623 partitions of characters (regardless of the alphabets);
@@ -17,5 +16,9 @@ for f in os.listdir("raw/50_alphabets"):
     for character_class in os.listdir(os.path.join("raw/50_alphabets", f)):
         character_images = os.listdir("raw/50_alphabets/" + f + "/" + character_class)
         os.system("mkdir raw/1623_characters/"+str(idx))
-        os.system("cp raw/50_alphabets/"+f+"/"+character_class+"/*"+" raw/1623_characters/"+str(idx))
+        # os.system("cp raw/50_alphabets/"+f+"/"+ re.sub(r'\)',r'\)', re.sub(r'\(', r'\(', character_class))+"/*"+" raw/1623_characters/"+str(idx))
+        # 由于 class 有 ( )
+        for png_file in os.listdir(os.sep.join(('raw', '50_alphabets', f, character_class))):
+            if png_file.endswith('.png'):
+                shutil.copy2(os.sep.join(('raw', '50_alphabets', f, character_class, png_file)), "raw/1623_characters/"+ str(idx))
         idx += 1

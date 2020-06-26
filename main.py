@@ -22,6 +22,7 @@ MODEL_PARAMS = {
     'shakespeare.stacked_lstm': (80, 80, 256), # seq_len, num_class num_hidden
     'synthetic.mclr': (10, ), # num_classes
     'vehicle.svm':(2, ), # num_classes
+    'omniglot.cnn': (5, ),  # num_classes
 }
 
 
